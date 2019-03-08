@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+    - echo "Deployment started on $(date)"
+  build:
+    commands:
+    - ./cicd/deploy.sh
+  post_build:
+    commands:
+    - echo "Deployment completed on $(date)"

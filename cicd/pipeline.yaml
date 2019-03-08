@@ -1,0 +1,285 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Pipeline for frontend
+Parameters:
+  RepositoryName:
+    Type: String
+Resources:
+  CodeCommitEventsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - events.amazonaws.com
+      Policies:
+      - PolicyName: AllowCodePipelineTrigger
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Sid: pipelinetrigger
+            Effect: Allow
+            Action:
+            - codepipeline:StartPipelineExecution
+            Resource:
+            - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - codepipeline.amazonaws.com
+      ManagedPolicyArns:
+      - !ImportValue pipeline-artifacts-policy-arn
+      - !ImportValue code-pipeline-basic-policy-arn
+      Policies:
+      - PolicyName: CodePipelineAccess
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Action:
+            - cloudformation:DescribeStacks
+            - cloudformation:CreateStack
+            - cloudformation:UpdateStack
+            - cloudformation:DeleteStack
+            - cloudformation:SetStackPolicy
+            - cloudformation:CreateChangeSet
+            - cloudformation:DeleteChangeSet
+            - cloudformation:DescribeChangeSet
+            - cloudformation:ExecuteChangeSet
+            Effect: Allow
+            Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${RepositoryName}/*
+          - Effect: Allow
+            Action:
+            - codecommit:GetBranch
+            - codecommit:GetCommit
+            - codecommit:UploadArchive
+            - codecommit:GetUploadArchiveStatus
+            Resource: !Sub arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:${RepositoryName}
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - codebuild.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - !ImportValue code-build-basic-policy-arn
+      - !ImportValue pipeline-artifacts-policy-arn
+      Policies:
+      - PolicyName: SsmParameters
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Action:
+            - s3:PutObject
+            - s3:ListBucket
+            Effect: Allow
+            Resource: !Sub arn:aws:s3:::${RepositoryName}-*
+          - Action:
+            - cloudformation:DescribeStackResource
+            Effect: Allow
+            Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${RepositoryName}/*
+  CloudFormationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - cloudformation.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - !ImportValue code-build-basic-policy-arn
+      - !ImportValue pipeline-artifacts-policy-arn
+      Policies:
+      - PolicyName: SsmParameters
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Action:
+            - s3:CreateBucket
+            - s3:DeleteBucket
+            - s3:PutBucketPolicy
+            - s3:DeleteBucketPolicy
+            - s3:PutBucketWebsite
+            - s3:GetBucketWebsite
+            - s3:DeleteBucketWebsite
+            - s3:PutEncryptionConfiguration
+            - s3:GetEncryptionConfiguration
+            - cloudfront:CreateDistribution
+            - cloudfront:GetDistribution
+            - cloudfront:GetDistributionConfig
+            - cloudfront:UpdateDistribution
+            - cloudfront:DeleteDistribution
+            - cloudfront:TagResource
+            - cloudfront:CreateCloudFrontOriginAccessIdentity
+            - cloudfront:GetCloudFrontOriginAccessIdentity
+            - cloudfront:GetCloudFrontOriginAccessIdentityConfig
+            - cloudfront:DeleteCloudFrontOriginAccessIdentity
+            - route53:GetHostedZone
+            - route53:ChangeResourceRecordSets
+            - route53:GetChange
+            - route53:ListResourceRecordSets
+            Effect: Allow
+            Resource: '*'
+  CodeBuildBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Cache:
+        Location: !Sub
+          - ${BucketName}/cache/${RepositoryName}
+          - BucketName: !ImportValue pipeline-artifacts-bucket-name
+        Type: S3
+      Artifacts:
+        Type: CODEPIPELINE
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: cicd/buildspec.yaml
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        PrivilegedMode: false
+        Image: aws/codebuild/nodejs:10.1.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+        - Name: AWS_ACCOUNT_ID
+          Value: !Ref AWS::AccountId
+      Name: !Ref RepositoryName
+      ServiceRole: !Ref CodeBuildServiceRole
+  CodeBuildBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${CodeBuildBuildProject}
+      RetentionInDays: 30
+  CodeBuildDeployProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: cicd/deployspec.yaml
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        PrivilegedMode: false
+        Image: aws/codebuild/ubuntu-base:14.04
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+        - Name: AWS_ACCOUNT_ID
+          Value: !Ref AWS::AccountId
+        - Name: DISTRIBUTION_STACK_NAME
+          Value: !Ref RepositoryName
+      Name: !Sub ${RepositoryName}-deploy
+      ServiceRole: !Ref CodeBuildServiceRole
+  CodeBuildDeployLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${CodeBuildDeployProject}
+      RetentionInDays: 30
+  PipelineTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: !Sub Trigger ${RepositoryName}-pipeline
+      EventPattern:
+        source:
+        - pipeline.update.lambda
+        detail-type:
+        - CodeCommit Repository State Change
+        resources:
+        - !Sub arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:${RepositoryName}
+        detail:
+          referenceType:
+          - branch
+          referenceName:
+          - master
+      Targets:
+      - Id: pipeline
+        RoleArn: !GetAtt CodeCommitEventsRole.Arn
+        Arn: !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Type: S3
+        Location: !ImportValue pipeline-artifacts-bucket-name
+      Name: !Ref RepositoryName
+      RoleArn: !GetAtt PipelineRole.Arn
+      Stages:
+      - Name: CodeCommitSources
+        Actions:
+        - Name: GetTemplateSources
+          ActionTypeId:
+            Category: Source
+            Owner: ThirdParty
+            Provider: Github
+            Version: 1
+          Configuration:
+            RepositoryName: !Ref RepositoryName
+            Branch: master
+            PollForSourceChanges: true
+            Owner: MartinDupont
+            Repo: cussrobot
+            OAuthToken: 8349c8e0d6f7870bea9e69e1940b3e6a42737d18
+          OutputArtifacts:
+          - Name: complete-sources
+          RunOrder: 1
+      - Name: Build
+        Actions:
+        - Name: ExecuteBuildspec
+          ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Version: 1
+            Provider: CodeBuild
+          Configuration:
+            ProjectName: !Ref CodeBuildBuildProject
+          InputArtifacts:
+          - Name: complete-sources
+          OutputArtifacts:
+          - Name: infrastructure-and-spa-bundle
+          RunOrder: 1
+      - Name: Deploy
+        Actions:
+        - Name: DeployCloudFormation
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          InputArtifacts:
+          - Name: infrastructure-and-spa-bundle
+          Configuration:
+            ActionMode: CREATE_UPDATE
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CloudFormationRole.Arn
+            StackName: !Ref RepositoryName
+            TemplatePath: infrastructure-and-spa-bundle::infrastructure/cf-template.yaml
+            TemplateConfiguration: infrastructure-and-spa-bundle::infrastructure/cf-template.config
+          RunOrder: 1
+        - Name: DeployArtifactToS3
+          ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Version: 1
+            Provider: CodeBuild
+          Configuration:
+            ProjectName: !Ref CodeBuildDeployProject
+          InputArtifacts:
+          - Name: infrastructure-and-spa-bundle
+          RunOrder: 2

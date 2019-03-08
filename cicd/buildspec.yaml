@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+    - echo "Set NPM Registry to Artifactory"
+    - echo "Run npm install"
+    - npm install
+  build:
+    commands:
+    - echo "Build started on $(date)"
+    - echo "Build module"
+    - npm run build
+  post_build:
+    commands:
+    - echo "Build completed on $(date)"
+artifacts:
+  files:
+  - infrastructure/cf-template.yaml
+  - infrastructure/cf-template.config
+  - cicd/deployspec.yaml
+  - cicd/deploy.sh
+  - build/**/*
+cache:
+  paths:
+  - node_modules/**/*
