@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Pipeline for frontend
 Parameters:
-  MyOauth2Token:
+  MyOAuth2Token:
     Type: String
 Resources:
   CodeCommitEventsRole:
@@ -185,7 +185,7 @@ Resources:
             PollForSourceChanges: true
             Owner: MartinDupont
             Repo: cussrobot
-            OAuthToken: !Ref MyOAuth2Token
+            OAuthToken: ${MyOAuth2Token}
           OutputArtifacts:
           - Name: complete-sources
           RunOrder: 1
