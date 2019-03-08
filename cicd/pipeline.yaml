@@ -197,7 +197,7 @@ Resources:
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         PrivilegedMode: false
-        Image: aws/codebuild/nodejs:10.1.0
+        Image: aws/codebuild/python:3.7.1
         Type: LINUX_CONTAINER
         EnvironmentVariables:
         - Name: AWS_ACCOUNT_ID
