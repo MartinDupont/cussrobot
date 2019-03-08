@@ -8,28 +8,4 @@ Resources:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
             SSEAlgorithm: AES256
-  LambdaArtifactsPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-        - Effect: Allow
-          Action:
-          - s3:GetBucketVersioning
-          - s3:ListBucket
-          Resource: !GetAtt LambdaArtifactsBucket.Arn
-        - Effect: Allow
-          Action:
-          - s3:GetObject
-          - s3:PutObject
-          Resource: !Sub arn:aws:s3:::${LambdaArtifactsBucket}/*
-Outputs:
-  LambdaArtifactsBucketName:
-    Value: !Ref LambdaArtifactsBucket
-    Export:
-      Name: lambda-artifacts-bucket-name
-  LambdaArtifactsPolicyArn:
-    Value: !Ref LambdaArtifactsPolicy
-    Export:
-      Name: lambda-artifacts-policy-arn
+
