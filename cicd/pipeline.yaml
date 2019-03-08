@@ -58,7 +58,7 @@ Resources:
             - cloudformation:DescribeChangeSet
             - cloudformation:ExecuteChangeSet
             Effect: Allow
-            Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/CussRobot/*
+            Resource: !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/cussrobot-infrastructure/*
   CloudFormationRole:
     Type: AWS::IAM::Role
     Properties:
