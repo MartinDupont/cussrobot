@@ -185,7 +185,7 @@ Resources:
             PollForSourceChanges: true
             Owner: MartinDupont
             Repo: cussrobot
-            OAuthToken: MyOAuth2Token
+            OAuthToken: !Ref MyOAuth2Token
           OutputArtifacts:
           - Name: complete-sources
           RunOrder: 1
