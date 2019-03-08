@@ -71,8 +71,8 @@ Resources:
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
-      - !ImportValue code-build-basic-policy-arn
-      - !ImportValue pipeline-artifacts-policy-arn
+      - !Ref CodeBuildBasicPolicy
+      - !Ref PipelineArtifactsPolicy
       Policies:
       - PolicyName: SsmParameters
         PolicyDocument:
@@ -89,6 +89,7 @@ Resources:
             - s3:PutEncryptionConfiguration
             - s3:GetEncryptionConfiguration
             - cloudfront:CreateDistribution
+            - cloudformation:DescribeStacks
             - cloudfront:GetDistribution
             - cloudfront:GetDistributionConfig
             - cloudfront:UpdateDistribution
@@ -230,7 +231,7 @@ Resources:
             PollForSourceChanges: true
             Owner: MartinDupont
             Repo: cussrobot
-            OAuthToken: ${MyOAuth2Token}
+            OAuthToken: !Ref MyOAuth2Token
           OutputArtifacts:
           - Name: complete-sources
           RunOrder: 1
