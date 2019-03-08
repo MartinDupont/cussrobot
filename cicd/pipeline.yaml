@@ -182,7 +182,7 @@ Resources:
             PollForSourceChanges: true
             Owner: MartinDupont
             Repo: cussrobot
-            OAuthToken: 8349c8e0d6f7870bea9e69e1940b3e6a42737d18
+            OAuthToken: 180b004a956da7ff43f3eecccb4de517f541ae4b
           OutputArtifacts:
           - Name: complete-sources
           RunOrder: 1
