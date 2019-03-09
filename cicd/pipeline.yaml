@@ -39,6 +39,7 @@ Resources:
           Version: 2012-10-17
           Statement:
           - Action:
+            - iam:CreateRole
             - s3:CreateBucket
             - s3:DeleteBucket
             - s3:PutBucketPolicy
