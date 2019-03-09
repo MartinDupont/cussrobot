@@ -5,8 +5,8 @@ phases:
     - echo "Pre build"
   build:
     commands:
-    - python3 -m unittest -v
     - echo "Build started on $(date)"
+    - python3 -m unittest -v
     - echo "Build module"
   post_build:
     commands:
