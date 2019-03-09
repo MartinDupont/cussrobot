@@ -27,8 +27,7 @@ Resources:
           - s3:GetObject
           - s3:PutObject
           Resource: !Sub arn:aws:s3:::${LambdaArtifactsBucket}/*
-          Principal:
-            AWS: !Ref "AWS::AccountId"
+          Principal: "*"
 Outputs:
   LambdaArtifactsBucketName:
     Value: !Ref LambdaArtifactsBucket
