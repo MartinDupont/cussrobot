@@ -16,7 +16,7 @@ aws cloudformation package \
 
 
 aws cloudformation deploy \
-    --stack-name cussrobot-lambdas-2 \
+    --stack-name cussrobot-lambdas \
     --template-file build/packaged-stack.yaml \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset

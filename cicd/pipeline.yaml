@@ -41,6 +41,8 @@ Resources:
           - Action:
             - iam:CreateRole
             - iam:PutRolePolicy
+            - iam:DeleteRolePolicy
+            - iam:AttachRolePolicy
             - iam:DetachRolePolicy
             - s3:CreateBucket
             - s3:DeleteBucket
