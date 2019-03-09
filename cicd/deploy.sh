@@ -6,7 +6,7 @@ aws cloudformation deploy \
     --template-file infrastructure/lambda-bucket.yaml \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset
-#LAMBDA_ARTIFACTS_BUCKET=$(aws cloudformation describe-stacks --output json --stack-name lambda-artifacts | jq -r '.Stacks | .[0].Outputs[] | select(.OutputKey == "LambdaArtifactsBucketName") | .OutputValue')
+LAMBDA_ARTIFACTS_BUCKET=$(aws cloudformation describe-stacks --output json --stack-name lambda-artifacts | jq -r '.Stacks | .[0].Outputs[] | select(.OutputKey == "LambdaArtifactsBucketName") | .OutputValue')
 
 
 #aws cloudformation package \
