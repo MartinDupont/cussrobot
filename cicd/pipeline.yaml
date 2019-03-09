@@ -49,6 +49,7 @@ Resources:
             - s3:PutEncryptionConfiguration
             - s3:GetEncryptionConfiguration
             - cloudformation:DescribeStacks
+            - cloudformation:GetTemplateSummary
             - cloudformation:CreateStack
             - cloudformation:UpdateStack
             - cloudformation:DeleteStack

@@ -43,7 +43,7 @@ Resources:
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PipelineUpdateExecutionRole.Arn
-      Code: ../pipelineupdates
+      Code: ../src
       Runtime: python3.7
       Timeout: 600
   LogGroup:
@@ -55,15 +55,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Description: Codecommit events to pipeline lambda
-      EventPattern:
-        source: [ "aws.codecommit" ]
-        detail-type: [ "CodeCommit Repository State Change" ]
-        detail:
-          event:
-          - referenceUpdated
-          - referenceCreated
-          referenceType: ["branch"]
-          referenceName: ["master"]
+      ScheduleExpression: "rate(1 minute)"
       Targets:
       - Id: PipelineStackUpdateLambda
         Arn: !GetAtt PipelineUpdateLambda.Arn

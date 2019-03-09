@@ -6,16 +6,16 @@ aws cloudformation deploy \
     --template-file infrastructure/lambda-bucket.yaml \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset
+
 LAMBDA_ARTIFACTS_BUCKET=$(aws cloudformation describe-stacks --output json --stack-name lambda-artifacts | jq -r '.Stacks | .[0].Outputs[] | select(.OutputKey == "LambdaArtifactsBucketName") | .OutputValue')
 
+aws cloudformation package \
+    --template-file infrastructure/cf-lambdas.yaml \
+    --s3-bucket "$LAMBDA_ARTIFACTS_BUCKET" \
+    --output-template-file build/packaged-stack.yaml
 
-#aws cloudformation package \
-#    --template-file infrastructure/cf-template.yaml \
-#    --s3-bucket "$LAMBDA_ARTIFACTS_BUCKET" \
-#    --output-template-file build/packaged-stack.yaml
-
-#aws cloudformation deploy \
-#    --stack-name cussrobot-infrastructure \
-#    --template-file build/packaged-stack.yaml \
-#    --capabilities CAPABILITY_IAM \
-#    --no-fail-on-empty-changeset
+aws cloudformation deploy \
+    --stack-name cussrobot-infrastructure \
+    --template-file build/packaged-stack.yaml \
+    --capabilities CAPABILITY_IAM \
+    --no-fail-on-empty-changeset
