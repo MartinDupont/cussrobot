@@ -5,6 +5,7 @@ phases:
     - echo "Deployment started on $(date)"
   build:
     commands:
+    - chmod +x cicd/deploy.sh
     - ./cicd/deploy.sh
   post_build:
     commands:
