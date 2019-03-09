@@ -16,6 +16,6 @@ aws cloudformation package \
 
 aws cloudformation deploy \
     --stack-name cussrobot-infrastructure \
-    --template-file build/packaged-stack.yaml \
+    --template-file infrastructure/lambda-bucket.yaml \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset
