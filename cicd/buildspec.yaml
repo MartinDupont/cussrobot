@@ -13,7 +13,7 @@ phases:
     - echo "Build completed on $(date)"
 artifacts:
   files:
-  - infrastructure/cf-template.yaml
-  - infrastructure/cf-template.config
+  - infrastructure/cf-lambdas.yaml
+  - infrastructure/lambda-bucket.yaml
   - cicd/deployspec.yaml
   - cicd/deploy.sh
