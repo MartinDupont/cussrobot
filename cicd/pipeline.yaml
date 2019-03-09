@@ -66,6 +66,14 @@ Resources:
             - s3:PutEncryptionConfiguration
             - s3:GetEncryptionConfiguration
             - cloudformation:DescribeStacks
+            - cloudformation:CreateStack
+            - cloudformation:UpdateStack
+            - cloudformation:DeleteStack
+            - cloudformation:SetStackPolicy
+            - cloudformation:CreateChangeSet
+            - cloudformation:DeleteChangeSet
+            - cloudformation:DescribeChangeSet
+            - cloudformation:ExecuteChangeSet
             Effect: Allow
             Resource: '*'
   CodePipelineBasicPolicy:
