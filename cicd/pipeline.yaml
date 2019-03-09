@@ -67,6 +67,8 @@ Resources:
             - cloudformation:DescribeChangeSet
             - cloudformation:ExecuteChangeSet
             - lambda:CreateFunction
+            - lambda:GetFunctionConfiguration
+            - lambda:DeleteFunction
             Effect: Allow
             Resource: '*'
   CodePipelineBasicPolicy:
