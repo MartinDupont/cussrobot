@@ -14,8 +14,8 @@ aws cloudformation package \
     --s3-bucket "$LAMBDA_ARTIFACTS_BUCKET" \
     --output-template-file build/packaged-stack.yaml
 
-aws cloudformation deploy \
-    --stack-name cussrobot-infrastructure \
-    --template-file infrastructure/lambda-bucket.yaml \
-    --capabilities CAPABILITY_IAM \
-    --no-fail-on-empty-changeset
+#aws cloudformation deploy \
+#    --stack-name cussrobot-infrastructure \
+#    --template-file build/packaged-stack.yaml \
+#    --capabilities CAPABILITY_IAM \
+#    --no-fail-on-empty-changeset
