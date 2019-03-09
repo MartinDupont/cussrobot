@@ -39,7 +39,9 @@ Resources:
           Version: 2012-10-17
           Statement:
           - Action:
+            - iam:GetRole
             - iam:CreateRole
+            - iam:DeleteRole
             - iam:PutRolePolicy
             - iam:DeleteRolePolicy
             - iam:AttachRolePolicy
