@@ -70,6 +70,7 @@ Resources:
             - lambda:GetFunctionConfiguration
             - lambda:DeleteFunction
             - lambda:AddPermission
+            - lambda:UpdateFunctionCode
             - events:PutEvents
             - events:DescribeRule
             - events:PutRule
@@ -80,7 +81,7 @@ Resources:
             - logs:CreateLogGroup
             - logs:PutRetentionPolicy
             - logs:DescribeLogGroups
-            - logs:DeleteLogGroup 
+            - logs:DeleteLogGroup
             Effect: Allow
             Resource: '*'
   CodePipelineBasicPolicy:
