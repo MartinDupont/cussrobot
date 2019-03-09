@@ -209,6 +209,29 @@ Resources:
     Properties:
       LogGroupName: !Sub /aws/codebuild/${CodeBuildBuildProject}
       RetentionInDays: 30
+  CodeBuildDeployProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: cicd/deployspec.yaml
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        PrivilegedMode: false
+        Image: aws/codebuild/python:3.7.1
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+        - Name: AWS_ACCOUNT_ID
+          Value: !Ref AWS::AccountId
+      Name: CussRobotDeploy
+      ServiceRole: !Ref CloudFormationRole
+  CodeBuildDeployLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/codebuild/${CodeBuildDeployProject}
+      RetentionInDays: 30
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -252,19 +275,14 @@ Resources:
           RunOrder: 1
       - Name: Deploy
         Actions:
-        - Name: DeployCloudFormation
+        - Name: DeployLambdas
           ActionTypeId:
-            Category: Deploy
+            Category: Build
             Owner: AWS
-            Provider: CloudFormation
             Version: 1
+            Provider: CodeBuild
+          Configuration:
+            ProjectName: !Ref CodeBuildDeployProject
           InputArtifacts:
           - Name: infrastructure-and-lambda-bundle
-          Configuration:
-            ActionMode: CREATE_UPDATE
-            Capabilities: CAPABILITY_IAM
-            RoleArn: !GetAtt CloudFormationRole.Arn
-            StackName: cussrobot-infrastructure
-            TemplatePath: infrastructure-and-lambda-bundle::infrastructure/cf-template.yaml
           RunOrder: 1
-
