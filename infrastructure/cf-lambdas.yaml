@@ -38,7 +38,7 @@ Resources:
             - logs:PutRetentionPolicy
             - logs:DescribeLogGroups
             Resource: '*'
-  PipelineUpdateLambda:
+  TwitterLambda:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.lambda_handler
@@ -49,20 +49,20 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/lambda/${PipelineUpdateLambda}
+      LogGroupName: !Sub /aws/lambda/${TwitterLambda}
       RetentionInDays: 30
   PipelineEventsRule:
     Type: AWS::Events::Rule
     Properties:
-      Description: Codecommit events to pipeline lambda
+      Description: Timer for twitter lambda.
       ScheduleExpression: "rate(1 minute)"
       Targets:
       - Id: PipelineStackUpdateLambda
-        Arn: !GetAtt PipelineUpdateLambda.Arn
+        Arn: !GetAtt TwitterLambda.Arn
   CloudWatchPermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref PipelineUpdateLambda
+      FunctionName: !Ref TwitterLambda
       Principal: events.amazonaws.com
       SourceArn: !GetAtt PipelineEventsRule.Arn

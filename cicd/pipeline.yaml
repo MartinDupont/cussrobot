@@ -40,6 +40,8 @@ Resources:
           Statement:
           - Action:
             - iam:CreateRole
+            - iam:PutRolePolicy
+            - iam:DetachRolePolicy
             - s3:CreateBucket
             - s3:DeleteBucket
             - s3:PutBucketPolicy
