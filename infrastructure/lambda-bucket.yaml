@@ -9,7 +9,7 @@ Resources:
         - ServerSideEncryptionByDefault:
             SSEAlgorithm: AES256
   LambdaArtifactsPolicy:
-    Type: AWS::S3::PutBucketPolicy
+    Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref LambdaArtifactsBucket
       PolicyDocument:
