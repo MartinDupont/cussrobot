@@ -14,8 +14,11 @@ aws cloudformation package \
     --s3-bucket "$LAMBDA_ARTIFACTS_BUCKET" \
     --output-template-file build/packaged-stack.yaml
 
-#aws cloudformation deploy \
-#    --stack-name cussrobot-infrastructure \
-#    --template-file build/packaged-stack.yaml \
-#    --capabilities CAPABILITY_IAM \
-#    --no-fail-on-empty-changeset
+echo "successfully created package."
+aws cloudformation delete-stack --role-arn arn:aws:iam::229185685484:role/cussrobot-pipeline-CloudFormationRole-AQRAK5PJO6W3 --stack-name cussrobot-infrastructure
+
+aws cloudformation deploy \
+    --stack-name cussrobot-infrastructure \
+    --template-file build/packaged-stack.yaml \
+    --capabilities CAPABILITY_IAM \
+    --no-fail-on-empty-changeset
