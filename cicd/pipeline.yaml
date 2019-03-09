@@ -67,7 +67,7 @@ Resources:
         - Effect: Allow
           Principal:
             Service:
-            - cloudformation.amazonaws.com
+            - codebuild.amazonaws.com
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
@@ -88,21 +88,7 @@ Resources:
             - s3:DeleteBucketWebsite
             - s3:PutEncryptionConfiguration
             - s3:GetEncryptionConfiguration
-            - cloudfront:CreateDistribution
             - cloudformation:DescribeStacks
-            - cloudfront:GetDistribution
-            - cloudfront:GetDistributionConfig
-            - cloudfront:UpdateDistribution
-            - cloudfront:DeleteDistribution
-            - cloudfront:TagResource
-            - cloudfront:CreateCloudFrontOriginAccessIdentity
-            - cloudfront:GetCloudFrontOriginAccessIdentity
-            - cloudfront:GetCloudFrontOriginAccessIdentityConfig
-            - cloudfront:DeleteCloudFrontOriginAccessIdentity
-            - route53:GetHostedZone
-            - route53:ChangeResourceRecordSets
-            - route53:GetChange
-            - route53:ListResourceRecordSets
             Effect: Allow
             Resource: '*'
   CodePipelineBasicPolicy:
