@@ -20,11 +20,15 @@ Resources:
           - s3:GetBucketVersioning
           - s3:ListBucket
           Resource: !GetAtt LambdaArtifactsBucket.Arn
+          Principal:
+            AWS: !Ref "AWS::AccountId"
         - Effect: Allow
           Action:
           - s3:GetObject
           - s3:PutObject
           Resource: !Sub arn:aws:s3:::${LambdaArtifactsBucket}/*
+          Principal:
+            AWS: !Ref "AWS::AccountId"
 Outputs:
   LambdaArtifactsBucketName:
     Value: !Ref LambdaArtifactsBucket
