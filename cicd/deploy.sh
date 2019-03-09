@@ -3,7 +3,7 @@ mkdir -p build
 
 aws cloudformation deploy \
     --stack-name lambda-artifacts \
-    --template-file infrastructure/lambda-artifacts.yaml \
+    --template-file infrastructure/lambda-bucket.yaml \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset
 #LAMBDA_ARTIFACTS_BUCKET=$(aws cloudformation describe-stacks --output json --stack-name lambda-artifacts | jq -r '.Stacks | .[0].Outputs[] | select(.OutputKey == "LambdaArtifactsBucketName") | .OutputValue')

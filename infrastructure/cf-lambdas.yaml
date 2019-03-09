@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates lambda.
+Resources:
+  PipelineUpdateExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+      - PolicyName: FunctionSpecificPermissions
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - events:PutEvents
+            Resource: '*'
+          - Effect: Allow
+            Action:
+            - events:DescribeRule
+            - events:PutRule
+            - events:DeleteRule
+            - events:PutTargets
+            - events:RemoveTargets
+            Resource: '*'
+          - Effect: Allow
+            Action:
+            - logs:DescribeLogGroups
+            - logs:CreateLogGroup
+            - logs:PutRetentionPolicy
+            - logs:DescribeLogGroups
+            Resource: '*'
+  PipelineUpdateLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.lambda_handler
+      Role: !GetAtt PipelineUpdateExecutionRole.Arn
+      Code: ../pipelineupdates
+      Runtime: python3.7
+      Timeout: 600
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${PipelineUpdateLambda}
+      RetentionInDays: 30
+  PipelineEventsRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Codecommit events to pipeline lambda
+      EventPattern:
+        source: [ "aws.codecommit" ]
+        detail-type: [ "CodeCommit Repository State Change" ]
+        detail:
+          event:
+          - referenceUpdated
+          - referenceCreated
+          referenceType: ["branch"]
+          referenceName: ["master"]
+      Targets:
+      - Id: PipelineStackUpdateLambda
+        Arn: !GetAtt PipelineUpdateLambda.Arn
+  CloudWatchPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PipelineUpdateLambda
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt PipelineEventsRule.Arn
