@@ -46,6 +46,12 @@ Resources:
       Code: ../tmp/
       Runtime: python3.7
       Timeout: 600
+      Environment:
+        Variables:
+          CONSUMER_KEY: a
+          CONSUMER_SECRET: a
+          ACCESS_TOKEN_KEY: a
+          ACCESS_TOKEN_SECRET: a
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:

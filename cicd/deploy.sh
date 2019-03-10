@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 mkdir -p build
 
+cd tmp
+ls
+cd ..
 aws cloudformation deploy \
     --stack-name lambda-artifacts \
     --template-file infrastructure/lambda-bucket.yaml \
