@@ -17,4 +17,4 @@ artifacts:
   - infrastructure/lambda-bucket.yaml
   - cicd/deployspec.yaml
   - cicd/deploy.sh
-  - src/index.py
+  - tmp/*

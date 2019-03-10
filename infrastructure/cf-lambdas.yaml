@@ -43,7 +43,7 @@ Resources:
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PipelineUpdateExecutionRole.Arn
-      Code: ../src
+      Code: ../tmp
       Runtime: python3.7
       Timeout: 600
   LogGroup:
