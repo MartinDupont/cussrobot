@@ -71,6 +71,7 @@ Resources:
             - lambda:DeleteFunction
             - lambda:AddPermission
             - lambda:UpdateFunctionCode
+            - lambda:UpdateFunctionConfiguration
             - events:PutEvents
             - events:DescribeRule
             - events:PutRule
