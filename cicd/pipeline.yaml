@@ -83,6 +83,7 @@ Resources:
             - logs:PutRetentionPolicy
             - logs:DescribeLogGroups
             - logs:DeleteLogGroup
+            - ssm:GetParameters
             Effect: Allow
             Resource: '*'
   CodePipelineBasicPolicy:
