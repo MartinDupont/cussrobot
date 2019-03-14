@@ -52,10 +52,10 @@ Resources:
       Timeout: 600
       Environment:
         Variables:
-          CONSUMER_KEY: '{{ssm:twitterConsumerKey}}'
-          CONSUMER_SECRET: '{{ssm:twitterConsumerSecret}}'
-          ACCESS_TOKEN_KEY: '{{ssm:twitterTokenKey}}'
-          ACCESS_TOKEN_SECRET: '{{ssm:twitterTokenSecret}}'
+          CONSUMER_KEY: '{{resolve:ssm:twitterConsumerKey:3}}'
+          CONSUMER_SECRET: '{{resolve:ssm:twitterConsumerSecret:2}}'
+          ACCESS_TOKEN_KEY: '{{resolve:ssm:twitterTokenKey:2}}'
+          ACCESS_TOKEN_SECRET: '{{resolve:ssm:twitterTokenSecret:2}}'
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
