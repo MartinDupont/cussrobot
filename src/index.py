@@ -1,4 +1,3 @@
-import random
 import twitter
 import os
 
@@ -12,6 +11,12 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   access_token_key=ACCESS_TOKEN_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
 
+def generate_insult():
+    return "404: Insult not found."
+
+
 def lambda_handler(event_json, context):
-    tweet_text = "Random tweet number: {}".format(random.randint(0, 10000))
-    print(tweet_text)
+
+    status = api.PostUpdate(generate_insult())
+    print(status.text)
+
