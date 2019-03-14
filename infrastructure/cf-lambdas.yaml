@@ -41,7 +41,7 @@ Resources:
           - Effect: Allow
             Action:
             - ssm:GetParameters
-            Resouce: '*'
+            Resource: '*'
   TwitterLambda:
     Type: AWS::Lambda::Function
     Properties:
