@@ -11,6 +11,7 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   access_token_key=ACCESS_TOKEN_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
 
+
 def generate_insult():
     return "404: Insult not found."
 
