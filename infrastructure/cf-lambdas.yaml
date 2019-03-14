@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Creates lambda.
 Resources:
-  PipelineUpdateExecutionRole:
+  TwitterLambdaRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -38,20 +38,24 @@ Resources:
             - logs:PutRetentionPolicy
             - logs:DescribeLogGroups
             Resource: '*'
+          - Effect: Allow
+            Action:
+            - ssm:GetParameters
+            Resouce: '*'
   TwitterLambda:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.lambda_handler
-      Role: !GetAtt PipelineUpdateExecutionRole.Arn
+      Role: !GetAtt TwitterLambdaRole.Arn
       Code: ../tmp/
       Runtime: python3.7
       Timeout: 600
       Environment:
         Variables:
-          CONSUMER_KEY: a
-          CONSUMER_SECRET: a
-          ACCESS_TOKEN_KEY: a
-          ACCESS_TOKEN_SECRET: a
+          CONSUMER_KEY: ${ssm:twitterConsumerKey}
+          CONSUMER_SECRET: ${ssm:twitterConsumerSecret}
+          ACCESS_TOKEN_KEY: ${ssm:twitterTokenKey}
+          ACCESS_TOKEN_SECRET: ${ssm:twitterTokenSecret}
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
