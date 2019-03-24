@@ -75,7 +75,7 @@ def preprocess(text_string):
     space_pattern = '\s+'
     giant_url_regex = ('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|'
         '[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-    mention_regex = '@[\w\-]+'
+    mention_regex = '@[\w\-]+:*'
     parsed_text = text_string.lower()
     parsed_text = re.sub(space_pattern, ' ', parsed_text)
     parsed_text = re.sub(giant_url_regex, '', parsed_text)

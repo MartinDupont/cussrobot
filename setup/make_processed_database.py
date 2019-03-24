@@ -64,7 +64,7 @@ if __name__ == "__main__":
     
     data = data[data["offensive_language"] > 1]
     data = data["tweet"][data.apply(lambda x: not find_bad_words(x["tweet"]), axis=1)] 
-    
+    stop
     emoji_distribution = get_emoji_distribution(data)
     hashtag_distribution = get_hashtag_distribution(data)
     
