@@ -64,6 +64,8 @@ BAD_WORDS = [
 
 EXCLUDED_WORDS = ['het', 'robin', 'valerie', 'spear', 'gooooo', 'je', 'vrijheid']
 
+BORING_EMOJIS = ["&#8220;", "&#8221;", "&#8230;"]
+
 def remove_retweets(text):
     return re.sub('rt MENTIONHERE','', text)
 
@@ -107,7 +109,7 @@ def get_distribution(tweets, regex, unwanted):
 
 
 def get_emoji_distribution(tweets):
-    return get_distribution(tweets, EMOJI_REGEX, [])
+    return get_distribution(tweets, EMOJI_REGEX, BORING_EMOJIS)
 
     
 def get_hashtag_distribution(tweets):
