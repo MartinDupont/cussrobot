@@ -7,6 +7,7 @@ Created on Sun Mar 24 19:11:10 2019
 import random
 import numpy as np
 import pickle
+import html
 
 transition_probabilities = pickle.load(open('transitions.pickle', "rb" ))
 reverse_word_index = pickle.load(open('word_index.pickle', "rb" ))
@@ -59,7 +60,7 @@ def sub_emojis(template):
     old = ""
     new = template.replace('EMOJIHERE ', 'EMOJIHERE')
     while old != new:
-        next_emoji = pick_random(emoji_distribution)
+        next_emoji = html.unescape(pick_random(emoji_distribution))
         old = new
         new = new.replace('EMOJIHERE', next_emoji, 1)
     return new
