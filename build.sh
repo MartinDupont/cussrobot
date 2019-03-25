@@ -8,7 +8,7 @@ mkdir -p tmp/package
 pip3 install pandas
 python3 setup/make_processed_database.py
 
-cp src/* tmp/
+cp -r src/ tmp/
 pip3 install numpy python-twitter --target tmp
 
 chmod -R 777 tmp
