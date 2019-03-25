@@ -39,7 +39,7 @@ def sub_mentions(template, followers):
 
 
 def lambda_handler(event_json, context):
-    
+
     last_tweet_id = api.GetUserTimeline(count=1)[0].id
 
     followers = api.GetFollowers()
@@ -50,5 +50,5 @@ def lambda_handler(event_json, context):
         # api.PostUpdate(generate_insult(follower_handles), in_response_to_status_id=mention)
         api.PostUpdate(generate_reply(), in_response_to_status_id=mention.id)
 
-    status = api.PostUpdate(generate_insult(follower_handles))
+    status = api.PostUpdate(generate_reply())
     print(status.text)
