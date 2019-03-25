@@ -12,8 +12,8 @@ import pathlib
 from preprocessing import preprocess, split_into_words, get_emoji_distribution, \
  get_hashtag_distribution, find_bad_words
 
-SOURCE_FOLDER = '../src/make_tweets/'
-path = str(pathlib.Path(__file__).parent)
+data_path = str(pathlib.Path(__file__).parent)
+source_path = str(pathlib.Path(__file__).parent.parent)+'/src/make_tweets/'
 
 def get_word_counts(data):
     word_counts = {}
@@ -62,7 +62,7 @@ def make_matrix_and_mappings(data):
 
 if __name__ == "__main__":
 
-    data = pd.read_csv(path+"/labeled_data.csv")
+    data = pd.read_csv(data_path+"/labeled_data.csv")
     
     data = data[data["offensive_language"] > 1]
     data = data["tweet"][data.apply(lambda x: not find_bad_words(x["tweet"]), axis=1)] 
@@ -74,9 +74,9 @@ if __name__ == "__main__":
     
     transition_probabilities, reverse_word_index = make_matrix_and_mappings(data)
 
-    pickle.dump(transition_probabilities, open(SOURCE_FOLDER+'transitions.pickle', "wb" ))
-    pickle.dump(reverse_word_index, open(SOURCE_FOLDER+'word_index.pickle', "wb" ))
-    pickle.dump(emoji_distribution, open(SOURCE_FOLDER+'emojis.pickle', "wb" ))
-    pickle.dump(hashtag_distribution, open(SOURCE_FOLDER+'hashtags.pickle', "wb" )) 
+    pickle.dump(transition_probabilities, open(source_path+'transitions.pickle', "wb" ))
+    pickle.dump(reverse_word_index, open(source_path+'word_index.pickle', "wb" ))
+    pickle.dump(emoji_distribution, open(source_path+'emojis.pickle', "wb" ))
+    pickle.dump(hashtag_distribution, open(source_path+'hashtags.pickle', "wb" )) 
     
                          
