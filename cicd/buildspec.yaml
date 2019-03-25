@@ -8,7 +8,11 @@ phases:
     - echo "Build started on $(date)"
     - chmod +x build.sh
     - ./build.sh
+    - cd setup
     - python3 -m unittest -v
+    - cd ../src
+    - python3 -m unittest -v
+    - cd ..
     - echo "Build module"
   post_build:
     commands:

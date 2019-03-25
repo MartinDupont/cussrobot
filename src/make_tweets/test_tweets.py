@@ -1,12 +1,12 @@
 import unittest
 
-from src.make_tweets import make_tweets as make
+from .make_tweets import make_tweet, tidy_grammar
 
 class CheckTweets(unittest.TestCase):
 
     def test_generate_tweets_without_crashing(self):
         for i in range(0,10):
-            make.make_tweet()
+            make_tweet()
     
     def test_tidy_grammar(self):
         parameters = [
@@ -20,7 +20,7 @@ class CheckTweets(unittest.TestCase):
             ('dead - ass', 'dead-ass'),
         ]
         for given, expected in parameters:
-            result = make.tidy_grammar(given)
+            result = tidy_grammar(given)
             self.assertEqual(result, expected)
         
 

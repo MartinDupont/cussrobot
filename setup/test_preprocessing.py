@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import unittest
-from setup import preprocessing as pp
+from .preprocessing import find_bad_words, preprocess
 
 class CheckTweets(unittest.TestCase):
 
     def test_filter_bad_words(self):
-        result = pp.find_bad_words("that guy is a nigger")
+        result = find_bad_words("that guy is a nigger")
         self.assertEqual(result, True)
         
     def test_preprocesser(self):
@@ -22,7 +22,7 @@ class CheckTweets(unittest.TestCase):
          ]
         
         for given, expected in parameters:
-            result = pp.preprocess(given)
+            result = preprocess(given)
             self.assertEqual(result, expected)
 
 
