@@ -8,7 +8,7 @@ CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
 ACCESS_TOKEN_KEY = os.environ['ACCESS_TOKEN_KEY']
 ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 
-ORIGINAL_TWEET_PROBABILITY = 1.0/120
+ORIGINAL_TWEET_PROBABILITY = 1.0/60
 # Currently operating with being called every 3 minutes. 
 
 api = twitter.Api(consumer_key=CONSUMER_KEY,
@@ -24,11 +24,13 @@ def generate_insult(followers):
         is_less_than = (len(tweet) < 240) and (len(tweet) > 5)
     return tweet
 
-def generate_reply():
+def generate_reply(first, followers):
+    victim_list = [first] + followers
     is_valid = False
     while not is_valid:
-        tweet = make_tweet()
-        is_valid = (len(tweet) < 240) and (len(tweet) > 5) and not ("MENTIONHERE" in tweet)
+        template = make_tweet()
+        tweet = sub_mentions(template, victim_list)
+        is_valid = (len(tweet) < 240) and (len(tweet) > 5) and (first in tweet)
     return tweet
 
 def sub_mentions(template, followers):
@@ -45,14 +47,16 @@ def lambda_handler(event_json, context):
 
     last_tweet_id = api.GetUserTimeline(count=1)[0].id
 
+    followers = api.GetFollowers()
+    follower_handles = ["@{}".format(f.screen_name) for f in followers]
+
     new_mentions = api.GetMentions(since_id=last_tweet_id)
     for mention in new_mentions:
         # api.PostUpdate(generate_insult(follower_handles), in_response_to_status_id=mention)
-        reply = api.PostUpdate(generate_reply(), in_reply_to_status_id=mention.id)
+        first = "@"+mention.user.screen_name
+        reply = api.PostUpdate(generate_reply(first, follower_handles), in_reply_to_status_id=mention.id)
         print(reply)
 
     if random.random() < ORIGINAL_TWEET_PROBABILITY:
-        followers = api.GetFollowers()
-        follower_handles = ["@{}".format(f.screen_name) for f in followers]
         status = api.PostUpdate(generate_insult(follower_handles))
         print(status.text)
