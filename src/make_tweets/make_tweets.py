@@ -8,11 +8,14 @@ import random
 import numpy as np
 import pickle
 import html
+import pathlib
 
-transition_probabilities = pickle.load(open('transitions.pickle', "rb" ))
-reverse_word_index = pickle.load(open('word_index.pickle', "rb" ))
-emoji_distribution = pickle.load(open('emojis.pickle', "rb" ))
-hashtag_distribution = pickle.load(open('hashtags.pickle', "rb" ))
+path = str(pathlib.Path(__file__).parent)
+
+transition_probabilities = pickle.load(open(path+'/transitions.pickle', "rb" ))
+reverse_word_index = pickle.load(open(path+'/word_index.pickle', "rb" ))
+emoji_distribution = pickle.load(open(path+'/emojis.pickle', "rb" ))
+hashtag_distribution = pickle.load(open(path+'/hashtags.pickle', "rb" ))
 
 
 def generate_tweet_template():

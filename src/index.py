@@ -1,7 +1,7 @@
 import random
 import twitter
 import os
-from make_tweets.py import make_tweet
+from make_tweets.make_tweets import make_tweet
 
 CONSUMER_KEY = os.environ['CONSUMER_KEY']
 CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
@@ -33,7 +33,8 @@ def sub_mentions(template, followers):
 
 def lambda_handler(event_json, context):
 
-    followers = api.GetFollowerIds()
+    followers = api.GetFollowers()
+    follower_handles = ["@{}".format(f.screen_name) for f in followers]
 
-    status = api.PostUpdate(generate_insult(followers))
+    status = api.PostUpdate(generate_insult(follower_handles))
     print(status.text)

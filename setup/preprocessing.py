@@ -86,6 +86,7 @@ def preprocess(text_string):
     parsed_text = re.sub('["\']', '', parsed_text)
     parsed_text = re.sub('&amp', '&', parsed_text)
     parsed_text = re.sub('[\(\)]', '', parsed_text)
+    parsed_text = re.sub(space_pattern, ' ', parsed_text).strip() # yes, it is necessary
     return parsed_text
 
 
