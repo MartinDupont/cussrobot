@@ -21,20 +21,34 @@ def generate_insult(followers):
         is_less_than = len(tweet) < 240
     return tweet
 
+def generate_reply():
+    is_valid = False
+    while not is_valid:
+        tweet = make_tweet()
+        is_valid = (len(tweet) < 240) and not ("MENTIONHERE" in tweet)
+    return tweet
+
 def sub_mentions(template, followers):
     old = ""
     new = template.replace('MENTIONHERE ', 'MENTIONHERE')
     while old != new:
-        next_hashtag = random.choice(followers)
+        next_follower = random.choice(followers)
         old = new
-        new = new.replace('MENTIONHERE', next_hashtag, 1)
+        new = new.replace('MENTIONHERE', next_follower, 1)
     return new
 
 
 def lambda_handler(event_json, context):
+    
+    last_tweet_id = api.GetUserTimeline(count=1)[0].id
 
     followers = api.GetFollowers()
     follower_handles = ["@{}".format(f.screen_name) for f in followers]
+
+    new_mentions = api.GetMentions(since_id=last_tweet_id)
+    for mention in new_mentions:
+        # api.PostUpdate(generate_insult(follower_handles), in_response_to_status_id=mention)
+        api.PostUpdate(generate_reply(), in_response_to_status_id=mention.id)
 
     status = api.PostUpdate(generate_insult(follower_handles))
     print(status.text)
