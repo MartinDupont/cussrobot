@@ -47,6 +47,7 @@ def tidy_grammar(template):
     template = template.replace(' - ', '-')
     return template
 
+
 def pick_random(input_dict):
     thing = [(a, b) for a, b in input_dict.items()]
     keys = [x[0] for x in thing]
@@ -59,23 +60,28 @@ def pick_random(input_dict):
     choice = keys[index]
     return choice
 
-def sub_emojis(template):
+
+def sub_emojis(template, distribution=emoji_distribution):
     old = ""
     new = template.replace('EMOJIHERE ', 'EMOJIHERE')
     while old != new:
-        next_emoji = html.unescape(pick_random(emoji_distribution))
+        next_emoji = html.unescape(pick_random(distribution))
         old = new
         new = new.replace('EMOJIHERE', next_emoji, 1)
     return new
 
-def sub_hashtags(template):
+
+def sub_hashtags(template, distribution=hashtag_distribution):
     old = ""
     new = template.replace('HASHTAGHERE ', 'HASHTAGHERE')
     while old != new:
-        next_hashtag = pick_random(hashtag_distribution)
+        next_hashtag = pick_random(distribution)
         old = new
-        new = new.replace('HASHTAGHERE', next_hashtag, 1)
+        new = new.replace('HASHTAGHERE', next_hashtag+' ', 1)
+        # The space is necessary so that hashtags don't join with the word
+        # that comes after it. 
     return new
+
 
 def is_useless_tweet(tweet):
     conds = [
