@@ -50,6 +50,7 @@ Resources:
       Code: ../tmp/
       Runtime: python3.7
       Timeout: 600
+      MemorySize: 256
       Environment:
         Variables:
           CONSUMER_KEY: '{{resolve:ssm:twitterConsumerKey:3}}'
