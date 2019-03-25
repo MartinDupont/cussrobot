@@ -8,10 +8,12 @@ Created on Sun Feb 24 16:58:52 2019
 import pandas as pd
 import numpy as np
 import pickle
+import pathlib
 from preprocessing import preprocess, split_into_words, get_emoji_distribution, \
  get_hashtag_distribution, find_bad_words
 
 SOURCE_FOLDER = '../src/make_tweets/'
+path = str(pathlib.Path(__file__).parent)
 
 def get_word_counts(data):
     word_counts = {}
@@ -60,7 +62,7 @@ def make_matrix_and_mappings(data):
 
 if __name__ == "__main__":
 
-    data = pd.read_csv("labeled_data.csv")
+    data = pd.read_csv(path+"/labeled_data.csv")
     
     data = data[data["offensive_language"] > 1]
     data = data["tweet"][data.apply(lambda x: not find_bad_words(x["tweet"]), axis=1)] 
