@@ -48,7 +48,7 @@ def lambda_handler(event_json, context):
     new_mentions = api.GetMentions(since_id=last_tweet_id)
     for mention in new_mentions:
         # api.PostUpdate(generate_insult(follower_handles), in_response_to_status_id=mention)
-        reply = api.PostUpdate(generate_reply(), in_response_to_status_id=mention.id)
+        reply = api.PostUpdate(generate_reply(), in_reply_to_status_id=mention.id)
         print(reply)
 
     if random.random() < ORIGINAL_TWEET_PROBABILITY:
