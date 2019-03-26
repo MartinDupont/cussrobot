@@ -104,3 +104,24 @@ def make_tweet():
     template = tidy_grammar(template)
     template = sub_emojis(template)
     return sub_hashtags(template)
+
+
+def sub_mentions(template, followers):
+    new = template.replace('MENTIONHERE ', 'MENTIONHERE')
+    follower_iterator = iter(followers)
+    while 'MENTIONHERE' in new:
+        next_follower = next(follower_iterator)
+        new = new.replace('MENTIONHERE', next_follower+' ', 1)
+    return new
+
+
+def generate_insult(ordered_followers):
+    is_valid = False
+    first = ordered_followers[0]
+    while not is_valid:
+        template = make_tweet()
+        if template.count('MENTIONHERE') > len(ordered_followers):
+            continue
+        tweet = sub_mentions(template, ordered_followers)
+        is_valid = (len(tweet) < 240) and (len(tweet) > 5) and (first in tweet)
+    return tweet

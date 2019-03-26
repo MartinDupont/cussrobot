@@ -1,7 +1,7 @@
 import random
 import twitter
 import os
-from make_tweets.make_tweets import make_tweet
+from make_tweets.make_tweets import generate_insult
 
 CONSUMER_KEY = os.environ['CONSUMER_KEY']
 CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
@@ -15,26 +15,6 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   consumer_secret=CONSUMER_SECRET,
                   access_token_key=ACCESS_TOKEN_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
-
-def generate_insult(ordered_followers):
-    is_less_than = False
-    first = ordered_followers[0]
-    while not is_less_than:
-        template = make_tweet()
-        tweet = sub_mentions(template, ordered_followers)
-        is_less_than = (len(tweet) < 240) and (len(tweet) > 5) and (first in tweet)
-    return tweet
-
-def sub_mentions(template, followers):
-    old = ""
-    new = template.replace('MENTIONHERE ', 'MENTIONHERE')
-    follower_iterator = iter(followers)
-    while old != new:
-        next_follower = next(follower_iterator)
-        old = new
-        new = new.replace('MENTIONHERE', next_follower+' ', 1)
-    return new
-
 
 def lambda_handler(event_json, context):
 
