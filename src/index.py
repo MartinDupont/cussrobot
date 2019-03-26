@@ -16,28 +16,21 @@ api = twitter.Api(consumer_key=CONSUMER_KEY,
                   access_token_key=ACCESS_TOKEN_KEY,
                   access_token_secret=ACCESS_TOKEN_SECRET)
 
-def generate_insult(followers):
+def generate_insult(ordered_followers):
     is_less_than = False
+    first = ordered_followers[0]
     while not is_less_than:
         template = make_tweet()
-        tweet = sub_mentions(template, followers)
-        is_less_than = (len(tweet) < 240) and (len(tweet) > 5)
-    return tweet
-
-def generate_reply(first, followers):
-    victim_list = [first] + followers
-    is_valid = False
-    while not is_valid:
-        template = make_tweet()
-        tweet = sub_mentions(template, victim_list)
-        is_valid = (len(tweet) < 240) and (len(tweet) > 5) and (first in tweet)
+        tweet = sub_mentions(template, ordered_followers)
+        is_less_than = (len(tweet) < 240) and (len(tweet) > 5) and (first in tweet)
     return tweet
 
 def sub_mentions(template, followers):
     old = ""
     new = template.replace('MENTIONHERE ', 'MENTIONHERE')
+    follower_iterator = iter(followers)
     while old != new:
-        next_follower = random.choice(followers)
+        next_follower = next(follower_iterator)
         old = new
         new = new.replace('MENTIONHERE', next_follower+' ', 1)
     return new
@@ -54,9 +47,12 @@ def lambda_handler(event_json, context):
     for mention in new_mentions:
         # api.PostUpdate(generate_insult(follower_handles), in_response_to_status_id=mention)
         first = "@"+mention.user.screen_name
-        reply = api.PostUpdate(generate_reply(first, follower_handles), in_reply_to_status_id=mention.id)
+        random.shuffle(follower_handles)
+        ordered_followers = [first] + [f for f in follower_handles if not f == first]
+        reply = api.PostUpdate(generate_insult(ordered_followers), in_reply_to_status_id=mention.id)
         print(reply)
 
     if random.random() < ORIGINAL_TWEET_PROBABILITY:
+        random.shuffle(follower_handles)
         status = api.PostUpdate(generate_insult(follower_handles))
         print(status.text)
